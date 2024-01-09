@@ -1,0 +1,68 @@
+[changelog]
+# changelog header
+header = """
+# Changelog\n
+"""
+# template for the changelog body
+# https://tera.netlify.app/docs/#introduction
+body = """
+{% if version %}\
+    {% set ghe_url_base = "https://code.corp.creditkarma.com/ck-private/fwk_talon-scala" %}
+    ## [{{ version | trim_start_matches(pat="v") }}]({{ghe_url_base}}/releases/tag/{{version}}) - ({{ timestamp | date(format="%Y-%m-%d") }})
+{% else %}\
+    ## Next Release
+{% endif %}\
+{% for scope, commits in commits | group_by(attribute="scope") %}
+    #### {{ scope | title | replace(from="-", to=" ")}}
+    {% for commit in commits %}
+        - {{commit.group}}: {% if commit.breaking %}[**breaking**]{% endif %} \
+            {{ commit.message | lower }} \
+    {% endfor %}
+{% endfor %}\
+"""
+# remove the leading and trailing whitespace from the template
+trim = true
+# changelog footer
+footer = """
+<!-- Happy building from the Talon Team 🦅 -->
+"""
+
+[git]
+# parse the commits based on https://www.conventionalcommits.org
+conventional_commits = true
+# filter out the commits that are not conventional
+filter_unconventional = true
+# process each line of a commit as an individual commit to support stacked PRs
+split_commits = true
+# regex for preprocessing the commit messages and replacing PR numbers with links
+commit_preprocessors = [
+    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://code.corp.creditkarma.com/ck-private/fwk_talon-scala/pull/${2}))"},
+]
+# regex for parsing and dispalying type next to commit
+commit_parsers = [
+    { message = "^feat", group = "feat"},
+    { message = "^fix", group = "fix"},
+    { message = "^docs", group = "docs"},
+    { message = "^perf", group = "perf"},
+    { message = "^refactor", group = "refactor"},
+    { message = "^test", group = "test"},
+    { message = "^chore", group = "chore"},
+    { message = "^cci", group = "cci"},
+    { message = "^security", group = "security"},
+]
+# protect breaking changes from being skipped due to matching a skipping commit_parser
+protect_breaking_commits = false
+# filter out the commits that are not matched by commit parsers
+filter_commits = true
+# glob pattern for matching git tags
+tag_pattern = "v[0-9]*"
+# regex for skipping tags
+# skip_tags = "v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+"
+# regex for ignoring prerelease tags
+ignore_tags = "v[0-9]+.[0-9]+.[0-9]+(-[0-9]+-[0-9]+-[0-9]+-[0-9]+)-(PRERELEASE)"
+# sort the tags topologically
+topo_order = false
+# sort the commits inside sections by oldest/newest order
+sort_commits = "newest"
+# limit the number of commits included in the changelog.
+# limit_commits = 42
