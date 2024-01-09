@@ -7,7 +7,7 @@ header = """
 # https://tera.netlify.app/docs/#introduction
 body = """
 {% if version %}\
-    {% set ghe_url_base = "https://code.corp.creditkarma.com/ck-private/fwk_talon-scala" %}
+    {% set ghe_url_base = "https://code.corp.com/repo" %}
     ## [{{ version | trim_start_matches(pat="v") }}]({{ghe_url_base}}/releases/tag/{{version}}) - ({{ timestamp | date(format="%Y-%m-%d") }})
 {% else %}\
     ## Next Release
@@ -24,7 +24,7 @@ body = """
 trim = true
 # changelog footer
 footer = """
-<!-- Happy building from the Talon Team 🦅 -->
+<!-- Happy building -->
 """
 
 [git]
